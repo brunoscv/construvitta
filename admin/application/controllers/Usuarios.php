@@ -36,9 +36,9 @@ class Usuarios extends MY_Controller {
 				}
 			}
 		}
-		if( !hasPerfil(1) ){
+		/* if( !hasPerfil(1) ){
 			$this->db->where("id >",1);
-		}
+		} */
 		$countUsuarios = $this->db
 							->select("count(u.id) AS quantidade")
 							->from("usuarios AS u")
@@ -57,9 +57,9 @@ class Usuarios extends MY_Controller {
 			}
 		}
 		
-		if( !hasPerfil(1) ){
+	/* 	if( !hasPerfil(1) ){
 			$this->db->where("id >",1);
-		}
+		} */
 		$resultUsuarios = $this->db
 									->select("*")
 									->from("usuarios AS u")
@@ -83,7 +83,7 @@ class Usuarios extends MY_Controller {
 		
 		$this->data['item'] = (object) array();
 		$this->data['item']->perfis = array();
-		$this->data['listaPerfis'] = $this->Perfis_model->listaPerfis();
+	/* 	$this->data['listaPerfis'] = $this->Perfis_model->listaPerfis(); */
 		
 		if( $this->input->post("enviar") ){
 			if( $this->form_validation->run('Usuarios') === FALSE ){
@@ -94,6 +94,8 @@ class Usuarios extends MY_Controller {
 				$usuario['nome'] 	= $this->input->post("nome",TRUE);
 				$usuario['email'] 	= $this->input->post("email",TRUE);
 				$usuario['senha'] 	= $this->encryption->encrypt($this->input->post("senha",TRUE));
+
+				print_r($usuario['senha']);exit;
 				$usuario['createdAt'] 	= date("Y-m-d H:i:s");
 				
 				$this->db->insert("usuarios", $usuario);

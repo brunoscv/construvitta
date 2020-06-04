@@ -90,9 +90,11 @@ class Perfis extends MY_Controller {
 			$this->load->model("Menus_model");
 			
 			$this->data['listaMenus'] = $this->Menus_model->getMenusRecursivo();
+
 			$perfil->menus = $this->Perfis_model->getMenusId($perfil->id);
 			
-			$this->data['item'] = &$perfil;
+			$this->data['item'] = $perfil;
+			
 			if( $this->input->post("enviar") ){
 				if( $this->form_validation->run('Perfis') === FALSE ){
 					$this->data['msg_error'] = validation_errors();

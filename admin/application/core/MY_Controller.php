@@ -55,16 +55,16 @@ class MY_Controller extends CI_Controller
 		$configuracoes = new StdClass();
 		$configuracoes->limite_usuarios 	= $this->config->item("limite_usuarios");
 
-		$cliente = FALSE;
+		/* $cliente = FALSE;
 		if( $this->data['userdata']['clientes_id'] ){
 			$this->load->model("Clientes_model");
-			$cliente = $this->Clientes_model->getCliente($this->data['userdata']['clientes_id']);
+			$cliente = $this->Clientes_model->get_cliente($this->data['userdata']['clientes_id']);
 			if( $cliente->configuracoes ){
 				$configuracoes->limite_usuarios 	= $cliente->configuracoes->limite_usuarios;
 			}
-		}
-		$this->cliente = $cliente;
-		$this->configuracoes = $configuracoes;
+		} */
+		/* $this->cliente = $cliente; */
+		/* $this->configuracoes = $configuracoes; */
 	}
 
 }

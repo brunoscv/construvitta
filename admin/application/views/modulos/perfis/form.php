@@ -1,3 +1,7 @@
+
+
+
+
 <div id="main-wrapper" class="container" style="margin-top: 2em; height: 100vh;">
 	<div class="row" data-container="all">
         <div class="col-md-12">
@@ -21,6 +25,7 @@
 							<label class="col-sm-2 control-label" for="descricao">Menus</label>
 							<div class="col-sm-10">
 								<?php $values = ($this->input->post("menus")) ? @$this->input->post("menus") : @$item->menus; ?>
+								
 								<?php echo recursiveFormMenuList('menus[]',$listaMenus, $values, 'id="menus"'); ?>
 							</div>
 						</div>

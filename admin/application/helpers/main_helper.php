@@ -49,13 +49,13 @@ function isUsuarioMaster(){
 	return false;	
 }
 
-function hasPerfil($perfil){
+/* function hasPerfil($perfil){
 	$CI = &get_instance();
 	if( in_array($perfil, $CI->data['userdata']['perfis']) ){
 		return true;
 	}
 	return false;	
-}
+} */
 
 function filtraRespostas($respostaPorPessoa, $alternativasFiltro = array()){
 		
