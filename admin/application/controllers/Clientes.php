@@ -249,7 +249,7 @@ class Clientes extends MY_Controller {
 		$mail->Priority = 1;
 		$mail->SetFrom("mensagens@construvitta.com.br", "Contato Construvitta");
 		$mail->AddReplyTo("mensagens@construvitta.com.br", "Contato Construvitta");
-		$mail->AddAddress("japasoares@gmail.com.br");
+		$mail->AddAddress("japasoares@gmail.com");
 		$mail->isHTML(true);
 		$mail->Subject = "Assunto da mensagem";
 		$mail->Body = "Escreva o texto do email aqui";
