@@ -244,11 +244,11 @@ class Clientes extends MY_Controller {
 		$mail->Host = "construvitta.com.br";
 		$mail->Port = 465; // or 587
 		$mail->IsHTML(true);
-		$mail->Username = "contato@sistema.construvitta.com.br";
-		$mail->Password = "src#123CONTATO";
+		$mail->Username = "mensagens@construvitta.com.br";
+		$mail->Password = "src#123CONSTRUVITTA";
 		$mail->Priority = 1;
-		$mail->SetFrom("contato@sistema.construvitta.com.br", "Contato Construvitta");
-		$mail->AddReplyTo("contato@sistema.construvitta.com.br", "Contato Construvitta");
+		$mail->SetFrom("mensagens@construvitta.com.br", "Contato Construvitta");
+		$mail->AddReplyTo("mensagens@construvitta.com.br", "Contato Construvitta");
 		$mail->AddAddress("japasoares@gmail.com.br", "brunocarvalho038@gmail.com", "brunocarvalho.0@hotmail.com");
 		$mail->isHTML(true);
 		$mail->Subject = "Assunto da mensagem";
