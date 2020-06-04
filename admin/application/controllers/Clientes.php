@@ -124,7 +124,7 @@ class Clientes extends MY_Controller {
 				$this->db->update("clientes", $cliente);
 				$this->salvar_arquivos($id);
 				
-				$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro <b>#{$cliente['id']}</b> atualizado!");
+				$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro <b>#{$id}</b> atualizado!");
 				redirect('clientes/index');
 				}
 			}
