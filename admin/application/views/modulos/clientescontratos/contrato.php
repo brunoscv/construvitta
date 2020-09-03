@@ -338,6 +338,17 @@ div.dragover {
 							</div>
 						</div>
 
+						<div class="row" <?= $displayed; ?>>
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="bmd-label-floating">Status</label>
+									<?php echo form_dropdown('status_doc', $listaStatus, set_value('status_doc', @$item->status_doc), 
+												'data-size="7" data-live-search="true" class="form-control fill_select btn_in own_selectbox" id="status"'); ?>
+									<small style="color:#F65676"><?php echo form_error('status_doc'); ?></small>
+								</div>
+							</div>
+						</div>
+
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">

@@ -69,8 +69,6 @@ class Clientes extends MY_Controller {
 		
 		$displayed = ($this->data['admin'] != 1) ? $displayed = "style='display:none;'" : $displayed = "";
 		$this->data['displayed'] = $displayed;
-		
-
 
 	}
 
@@ -111,6 +109,11 @@ class Clientes extends MY_Controller {
 		foreach ($correspondentes as $correspondente) {
 			$this->data['listaCorrespondentes'][$correspondente->id] = $correspondente->nome_correspondente;
 		}
+		$clientes_status = $this->Clientes_model->get_status_clientes();
+		$this->data['listaStatus'] = array();
+		foreach ($clientes_status as $status) {
+			$this->data['listaStatus'][$status->id] = $status->descricao;
+		}
 		//fim Campos relacionados
 		
 		if($this->input->post('enviar')){
@@ -145,6 +148,9 @@ class Clientes extends MY_Controller {
 				$cliente['user_id'] 		 = $this->input->post('user_id', TRUE);
 				$cliente['correspondente_id']= $this->input->post('correspondente_id', TRUE);
 				$cliente['status'] 		 	 = 1;
+				if ($this->data['tipo_id'] == 4 || $this->data['tipo_id'] == 2 ) {
+					$cliente['status_doc'] 		 = $this->input->post('status_doc', TRUE);
+				}
 				$cliente['contrato']		 = 0;
 				$cliente['createdAt'] 	 	 = date("Y-m-d H:i:s");
 
@@ -157,7 +163,10 @@ class Clientes extends MY_Controller {
 				$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro adicionado com sucesso!");
 				redirect('clientes/index');
 			}
-		} 	
+		}
+		
+		$displayed = ($this->data['tipo_id'] == 4 || $this->data['tipo_id'] == 2 ) ? $displayed = "" : $displayed = "style='display:none;'";
+		$this->data['displayed'] = $displayed;
     }
 	
 	public function editar(){
@@ -200,6 +209,11 @@ class Clientes extends MY_Controller {
 		foreach ($correspondentes as $correspondente) {
 			$this->data['listaCorrespondentes'][$correspondente->id] = $correspondente->nome_correspondente;
 		}
+		$clientes_status = $this->Clientes_model->get_status_clientes();
+		$this->data['listaStatus'] = array();
+		foreach ($clientes_status as $status) {
+			$this->data['listaStatus'][$status->id] = $status->descricao;
+		}
 		//fim Campos relacionados
 
 		if(!$cliente){
@@ -240,6 +254,9 @@ class Clientes extends MY_Controller {
 				$cliente['user_id'] 		 = $this->input->post('user_id', TRUE);
 				$cliente['correspondente_id']= $this->input->post('correspondente_id', TRUE);
 				$cliente['status'] 		 	 = 1;
+				if ($this->data['tipo_id'] == 4 || $this->data['tipo_id'] == 2 ) {
+					$cliente['status_doc'] 		 = $this->input->post('status_doc', TRUE);
+				}
 				$cliente['contrato']		 = 0;
 				$cliente['updatedAt'] 	 	 = date("Y-m-d H:i:s");
 
@@ -253,11 +270,13 @@ class Clientes extends MY_Controller {
 				}
 			}
 		}
+		$displayed = ($this->data['tipo_id'] == 4 || $this->data['tipo_id'] == 2 ) ? $displayed = "" : $displayed = "style='display:none;'";
+		$this->data['displayed'] = $displayed;
 	}
 
 	public function ver(){
 		$id 	 		  = $this->uri->segment(3);
-		$cliente 		  = $this->db->select('c.*, cr.nome_corretor, co.nome_correspondente')->from("clientes AS c")->join('corretores AS cr', 'c.user_id = cr.id')->join('correspondentes AS co', 'c.correspondente_id = co.id')->where("c.id", $id)->get()->row();
+		$cliente 		  = $this->db->select('c.*, cr.nome_corretor, co.nome_correspondente, cs.descricao')->from("clientes AS c")->join('corretores AS cr', 'c.user_id = cr.id')->join('correspondentes AS co', 'c.correspondente_id = co.id')->join("clientes_status AS cs", "c.status_doc = cs.id")->where("c.id", $id)->get()->row();
 		$cliente_arquivos = $this->db->from("clientes_arquivos AS ca")->where("cliente_id", $id)->get()->result();
 		//arShow($cliente);exit;
 		if(!$cliente){
@@ -365,8 +384,9 @@ class Clientes extends MY_Controller {
 		$correspondente = $this->db->select("co.id, co.nome_correspondente, co.email")->from("correspondentes AS co")->join("clientes AS cl", "cl.correspondente_id = co.id")->where("cl.id", $cliente_id)->get()->result();
 		$cliente  = $this->db->select("cl.nome_cliente, cl.cpf, cl.email, cl.telefone, cl.renda_bruta, cl.compr_dependente, cl.fgts,
 		cl.valor_fgts, cl.valor_sinal, cl.loteamento_zona, cl.c0, cl.c0_s, cl.c1, cl.c2, cl.c3, cl.c4, cl.c5, cl.com_muro, 
-		cl.outro_modelo, cl.valor_lote, cl.valor_casa, cl.extra, cl.muro, cl.cerca_eletrica, cl.portao_automatico, cl.observacoes, DATE_FORMAT(cl.createdAt,'%d/%m/%Y') AS date")
+		cl.outro_modelo, cl.valor_lote, cl.valor_casa, cl.extra, cl.muro, cl.cerca_eletrica, cl.portao_automatico, cl.observacoes, cs.descricao, DATE_FORMAT(cl.createdAt,'%d/%m/%Y') AS date")
 		->from("clientes AS cl")
+		->join("clientes_status AS cs", "cl.status_doc = cs.id")
 		->where("cl.id", $cliente_id)
 		->get()->result();
 		$arquivos = $this->db->select("a.caminho, a.descricao")->from("clientes_arquivos AS a")->where("a.cliente_id", $cliente_id)->get()->result();
@@ -389,8 +409,17 @@ class Clientes extends MY_Controller {
 		$message = str_replace('%valor_fgts%', $cliente[0]->valor_fgts, $message);
 		$message = str_replace('%valor_sinal%', $cliente[0]->valor_sinal, $message);
 		$message = str_replace('%loteamento_zona%', $cliente[0]->loteamento_zona, $message);
+		$message = str_replace('%c0%', $cliente[0]->c0 == 1 ? "SIM" : "NÃO", $message);
+		$message = str_replace('%c0_s%', $cliente[0]->c0_s == 1 ? "SIM" : "NÃO", $message);
+		$message = str_replace('%c1%', $cliente[0]->c1 == 1 ? "SIM" : "NÃO", $message);
+		$message = str_replace('%c2%', $cliente[0]->c2 == 1 ? "SIM" : "NÃO", $message);
+		$message = str_replace('%c3%', $cliente[0]->c3 == 1 ? "SIM" : "NÃO", $message);
+		$message = str_replace('%c4%', $cliente[0]->c4 == 1 ? "SIM" : "NÃO", $message);
+		$message = str_replace('%c5%', $cliente[0]->c5 == 1 ? "SIM" : "NÃO", $message);
+		$message = str_replace('%com_muro%', $cliente[0]->com_muro == 1 ? "SIM" : "NÃO", $message);
 		$message = str_replace('%outro_modelo%', $cliente[0]->outro_modelo, $message);
 		$message = str_replace('%observacoes%', $cliente[0]->observacoes, $message);
+		$message = str_replace('%status%', $cliente[0]->descricao, $message);
 
 		$mail = $this->phpmailer_lib->load();
 

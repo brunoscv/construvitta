@@ -335,6 +335,15 @@ div.dragover {
 							</div>
 						</div>
 					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="bmd-label-floating">Status: </label>
+								<input type="text" value="<?php echo set_value("descricao", @$item->descricao); ?>" class="form-control" name="descricao" id="descricao" disabled="">
+							</div>
+						</div>
+					</div>
 					
 					<div class="row">
 						<div class="col-md-12">

@@ -20,5 +20,14 @@ class Clientes_model extends CI_Model {
 								   ORDER BY nome_cliente ASC ")
 						 ->result();
 	}
+
+	public function get_status_clientes() {
+		return	$this->db->query(" SELECT id, descricao
+									FROM clientes_status
+								   ORDER BY descricao ASC ")
+						 ->result();
+	}
+
+
 	
 }
