@@ -15,6 +15,7 @@
 |
 */
 $config['base_url']	= 'http://construvitta.com.br/construvitta/admin';
+$config['base_url']	= 'http://localhost/construvitta/admin';
 
 /*
 |--------------------------------------------------------------------------

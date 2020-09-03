@@ -35,6 +35,19 @@
   <script src="<?php echo base_url(); ?>assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
   <!--<script src="https://cdn.tiny.cloud/1/sp6agbdzuu3vbpn0mwhu4xmge5uafg3u3ialsyvk9wbfdz30/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>-->
   <script src="https://cdn.tiny.cloud/1/71opckoclv8xmv3xsmjmefbky6g16se47k5jsc65cwwnldjo/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <style type="text/css">
+    /* CUSTOM CSS */
+		table.dataTable tbody tr.selected a, table.dataTable tbody th.selected a, table.dataTable tbody td.selected a {
+			color: #525f7f;
+		}
+		table.dataTable tbody > tr.selected {
+			background-color: white;
+		}
+		table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected {
+			color: #525f7f;
+		}
+		/* CUSTOM CSS */
+  </style>
 </head>
 
 <body>
