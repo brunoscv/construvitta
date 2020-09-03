@@ -43,10 +43,10 @@ $route["clientes-contratos"] = "clientescontratos";
 $route["clientes-contratos/index"] = "clientescontratos/index";
 $route["clientes-contratos/buscar"] = "clientescontratos/buscar";
 $route["clientes-contratos/criar"] = "clientescontratos/criar";
-$route["clientes-contratos/ver/(:any)"] = "clientescontratos/ver/$1";
+$route["clientes-contratos/ver/(:any)"] = "clientescontratos/ver/";
 $route["clientes-contratos/contrato/(:any)"] = "clientescontratos/contrato";
-$route["clientes-contratos/editar/(:any)"] = "clientescontratos/editar/$1";
-$route["clientes-contratos/delete/(:any)"] = "clientescontratos/delete/$1";
+$route["clientes-contratos/editar/(:any)"] = "clientescontratos/editar/";
+$route["clientes-contratos/delete/(:any)"] = "clientescontratos/delete/";
 /** Rotas de clientes com contratos */
 
 $route['default_controller'] = "dashboard";

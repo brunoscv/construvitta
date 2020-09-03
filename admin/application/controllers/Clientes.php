@@ -311,7 +311,7 @@ class Clientes extends MY_Controller {
 					mkdir($config['upload_path'], 0777, TRUE);
 				}
 				$config['allowed_types'] 	= 'jpg|jpeg|png|pdf';
-				$config['max_size']				= 2*1024;
+				$config['max_size']				= 20*1024;
 				$config['encrypt_name'] 	= TRUE;
 				
 				$this->load->library('upload', $config);
