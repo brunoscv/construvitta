@@ -260,6 +260,25 @@ div.dragover {
 							</div>
 						</div>
 					</div>
+					
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="bmd-label-floating">Corretor Responsável: </label>
+								<input type="text" value="<?php echo set_value("nome_corretor", @$item->nome_corretor); ?>" class="form-control" name="nome_corretor" id="nome_corretor" disabled="">
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="bmd-label-floating">Correspondente Responsável: </label>
+								<input type="text" value="<?php echo set_value("nome_correspondente", @$item->nome_correspondente); ?>" class="form-control" name="nome_correspondente" id="nome_correspondente" disabled="">
+							</div>
+						</div>
+					</div>
+					
 					<div class="row">
 						<div class="col-md-12">
 							<ul class="list-group list-group-lg list-group-flush" id="filename">
@@ -272,11 +291,11 @@ div.dragover {
 												</div>
 											</div>
 											<div class='col ml--3'>
-												<h4 class='mb-1'> <?= $arquivo->descricao ?> </h4>
+												<h4 class='mb-1'> <?= $arquivo->nome_arquivo ?> </h4>
 												<p class='small text-muted mb-0'><strong><?= $arquivo->tamanho ?></strong> kb</p>
 											</div>
 											<div class='col-auto'>
-												<a href="<?= $arquivo->caminho . $arquivo->descricao; ?>" role='button' aria-haspopup='true' aria-expanded='false'><i class='fa fa-download'></i></a>
+												<a href="<?= base_url() . $arquivo->caminho . $arquivo->descricao; ?>" role='button' aria-haspopup='true' aria-expanded='false'><i class='fa fa-download'></i></a>
 											</div>
 										</div>
 									</li>

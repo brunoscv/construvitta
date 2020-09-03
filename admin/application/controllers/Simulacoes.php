@@ -5,7 +5,7 @@ class Simulacoes extends MY_Controller {
 	public $data;	
 	function __construct(){
 		parent::__construct();
-		/* $this->_auth(); */
+		$this->_auth();
 		$this->load->model("Simulacoes_model");
 		$this->load->model("Clientes_model");
 		$this->load->model("Corretores_model");

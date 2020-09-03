@@ -33,7 +33,8 @@
   <script src="https://cdn.quilljs.com/1.3.4/quill.js"></script>
   <script src="<?php echo base_url(); ?>assets/plugins/select-picker/js/bootstrap-select.js"></script>
   <script src="<?php echo base_url(); ?>assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
-  <script src="https://cdn.tiny.cloud/1/sp6agbdzuu3vbpn0mwhu4xmge5uafg3u3ialsyvk9wbfdz30/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <!--<script src="https://cdn.tiny.cloud/1/sp6agbdzuu3vbpn0mwhu4xmge5uafg3u3ialsyvk9wbfdz30/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>-->
+  <script src="https://cdn.tiny.cloud/1/71opckoclv8xmv3xsmjmefbky6g16se47k5jsc65cwwnldjo/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 
 <body>
@@ -61,79 +62,7 @@
         <div class="collapse navbar-collapse" id="sidenav-collapse-main">
           <!-- Nav items -->
           <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link active" href="<?php echo base_url(); ?>dashboard" role="button" aria-expanded="false">
-                  <i class="fas fa-tachometer-alt text-primary"></i>
-                  <span class="nav-link-text">Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#navbar-pacientes" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-pacientes">
-                <i class="ni ni-single-copy-04 text-orange"></i>
-                <span class="nav-link-text">Cadastros</span>
-              </a>
-              <div class="collapse" id="navbar-pacientes">
-                <ul class="nav nav-sm flex-column">
-                  <li class="nav-item">
-                    <a href="<?php echo base_url(); ?>clientes" class="nav-link">Listar Clientes</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="<?php echo base_url(); ?>corretores" class="nav-link">Listar Corretores</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="<?php echo base_url(); ?>correspondentes" class="nav-link">Listar Correspondentes</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="<?php echo base_url(); ?>imobiliarias" class="nav-link">Listar Imobiliárias</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#navbar-clientes-contratos" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-clientes-contratos">
-                <i class="ni ni-single-copy-04 text-orange"></i>
-                <span class="nav-link-text">Clientes c/ Contrato</span>
-              </a>
-              <div class="collapse" id="navbar-clientes-contratos">
-                <ul class="nav nav-sm flex-column">
-                  <li class="nav-item">
-                    <a href="<?php echo base_url(); ?>clientes-contratos" class="nav-link">Listar Clientes c/ Contrato</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo base_url(); ?>simulacoes">
-                <i class="ni ni-archive-2 text-green"></i>
-                <span class="nav-link-text">Simulações</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo base_url(); ?>">
-                <i class="far fa-money-bill-alt text-danger"></i>
-                <span class="nav-link-text">Financeiro</span>
-              </a>
-            </li>
-            
-            <li class="nav-item">
-              <a class="nav-link" href="#navbar-configuration" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-examples">
-                <i class="fa fa-cogs text-primary"></i>
-                <span class="nav-link-text">Configurações</span>
-              </a>
-              <div class="collapse" id="navbar-configuration">
-                <ul class="nav nav-sm flex-column">
-                  <li class="nav-item">
-                    <a href="<?php echo base_url(); ?>menus" class="nav-link">Menus</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="<?php echo base_url(); ?>usuarios" class="nav-link">Usuários</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="<?php echo base_url(); ?>perfis" class="nav-link">Perfis de Acesso</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
+            <?php echo recursiveMenuNav($menuOrdenado,'id="sidebar-menu"');$menuOrdenado=FALSE; ?>
           </ul>
           <!-- Divider -->
           <hr class="my-3">
@@ -243,7 +172,7 @@
                     <img alt="Image placeholder" src="<?php echo base_url(); ?>assets/img/theme/user.png">
                     </span>
                     <div class="media-body ml-2 d-none d-lg-block">
-                    <span class="mb-0 text-sm  font-weight-bold"><!-- <?= $userdata['nome']; ?> -->Administrador</span>
+                    <span class="mb-0 text-sm  font-weight-bold"><?= $userdata['nome']; ?></span>
                     </div>
                 </div>
                 </a>

@@ -75,7 +75,7 @@
 										<td class="">
 											<a class="mr-2" href="<?php echo site_url("corretores/ver/".$item->id); ?>"><i class='fa fa-eye'></i></a>
 											<a class="mr-2" href="<?php echo site_url("corretores/editar/".$item->id); ?>"><i class='fas fa-edit'></i></a>
-											<a class="" href="<?php echo site_url("corretores/delete/". $item->id); ?>"><i class='fa fa-trash'></i></a>
+											<!-- <a class="" href="<?php echo site_url("corretores/delete/". $item->id); ?>"><i class='fa fa-trash'></i></a> -->
 										</td>
 									</tr>
 								<?php endforeach; ?>

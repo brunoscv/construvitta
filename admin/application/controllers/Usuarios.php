@@ -6,6 +6,10 @@ class Usuarios extends MY_Controller {
 		parent::__construct();
 		
 		$this->_auth();
+
+		//adiciona os dados do login para fazer as visualizacoes de informacoes
+		$this->data['admin'] 	= $this->session->userdata('userdata')['principal'];
+		$this->data['user_id'] 	= $this->session->userdata('userdata')['id'];
 		
 		$this->data['campos'] = array(
 			'u.nome' => 'Nome',
@@ -83,20 +87,51 @@ class Usuarios extends MY_Controller {
 		
 		$this->data['item'] = (object) array();
 		$this->data['item']->perfis = array();
-	/* 	$this->data['listaPerfis'] = $this->Perfis_model->listaPerfis(); */
+		$this->data['listaPerfis'] = $this->Perfis_model->listaPerfis();
+
+		//Campos relacionados
+		//caso seja necessario adicione os relacionamento aqui
+		$usuarios_tipos = $this->db->from("usuarios_tipos")->get()->result();
+		$this->data['listaUsuarios'] = array();
+		$this->data['listaUsuarios'][''] = "Selecione um Tipo de Usuário";
+		foreach ($usuarios_tipos as $usuario) {
+			$this->data['listaUsuarios'][$usuario->id] = $usuario->descricao;
+		}
+		//fim Campos relacionados
 		
 		if( $this->input->post("enviar") ){
 			if( $this->form_validation->run('Usuarios') === FALSE ){
 				$this->data['msg_error'] = validation_errors("<p>","</p>");
 			} else {
 				$usuario = array();
-				$usuario['usuario'] = strtolower($this->input->post("usuario",TRUE));
-				$usuario['nome'] 	= $this->input->post("nome",TRUE);
-				$usuario['email'] 	= $this->input->post("email",TRUE);
-				$usuario['senha'] 	= $this->encryption->encrypt($this->input->post("senha",TRUE));
-
-				print_r($usuario['senha']);exit;
-				$usuario['createdAt'] 	= date("Y-m-d H:i:s");
+				$usuario['usuario']   = strtolower($this->input->post("usuario",TRUE));
+				//$usuario['nome'] 	  = $this->input->post("nome",TRUE);
+				$usuario['email'] 	  = $this->input->post("email",TRUE);
+				$usuario['senha'] 	  = $this->encryption->encrypt($this->input->post("senha",TRUE));
+				$usuario['principal'] = ($this->input->post("principal")) ? $this->input->post("principal") : "0";
+				$usuario['createdAt'] = date("Y-m-d H:i:s");
+				
+				$usuario["tipo_id"] 	  = $this->input->post("tipo_id",TRUE);
+				$usuario["usuario_id"] = $this->input->post("usuario_id",TRUE);
+				
+				switch ($usuario["tipo_id"]) {
+					case 1:
+						$usuarios = $this->db->select("nome_corretor")->from("corretores")->where("id", $usuario["usuario_id"])->get()->result();
+						$usuario["nome"] = $usuarios[0]->nome_corretor;
+					break;
+					case 2:
+						$usuarios = $this->db->select("nome_correspondente")->from("correspondentes")->where("id", $usuario["usuario_id"])->get()->result();
+						$usuario["nome"] = $usuarios[0]->nome_correspondente;
+					break;
+					case 3:
+						$usuarios = $this->db->select("nome_imobiliaria")->from("imobiliarias")->where("id", $usuario["usuario_id"])->get()->result();
+						$usuario["nome"] = $usuarios[0]->nome_imobiliaria;
+					break;
+					
+					default:
+						$usuario["nome"] = "Construvita";
+					break;
+				}
 				
 				$this->db->insert("usuarios", $usuario);
 				if( $this->input->post("perfis") ){
@@ -124,9 +159,18 @@ class Usuarios extends MY_Controller {
 		$this->load->model("Usuarios_model");
 		
 		$id = $this->uri->segment(3);
-		if( !hasPerfil(1) ){
-			$this->db->where("id > ",1);
+		// if( !hasPerfil(1) ){
+		// 	$this->db->where("id > ",1);
+		// }
+
+		//Campos relacionados
+		//caso seja necessario adicione os relacionamento aqui
+		$usuarios_tipos = $this->db->from("usuarios_tipos")->get()->result();
+		$this->data['listaUsuarios'] = array();
+		foreach ($usuarios_tipos as $usuario) {
+			$this->data['listaUsuarios'][$usuario->id] = $usuario->descricao;
 		}
+		//fim Campos relacionados
 		
 		$usuario = $this->db
 						->from("usuarios AS m")
@@ -144,16 +188,39 @@ class Usuarios extends MY_Controller {
 					$this->data['msg_error'] = validation_errors();
 				} else {
 					$usuario = array();
-					$usuario['id'] 		= $id; 
-					$usuario['usuario'] = strtolower($this->input->post("usuario",TRUE));
-					$usuario['nome'] 	= $this->input->post("nome",TRUE);
-					$usuario['email'] 	= $this->input->post("email",TRUE);
+					$usuario['id'] 			= $id; 
+					$usuario['usuario'] 	= strtolower($this->input->post("usuario",TRUE));
+					$usuario['nome'] 		= $this->input->post("nome",TRUE);
+					$usuario['email'] 		= $this->input->post("email",TRUE);
 					$usuario['updatedAt'] 	= date("Y-m-d H:i:s");
+
+					$usuario["tipo_id"] 	  = $this->input->post("tipo_id",TRUE);
+					$usuario["usuario_id"] = $this->input->post("usuario_id",TRUE);
+					
+					switch ($usuario["tipo_id"]) {
+						case 1:
+							$usuarios = $this->db->select("nome_corretor")->from("corretores")->where("id", $usuario["usuario_id"])->get()->result();
+							$usuario["nome"] = $usuarios[0]->nome_corretor;
+						break;
+						case 2:
+							$usuarios = $this->db->select("nome_correspondente")->from("correspondentes")->where("id", $usuario["usuario_id"])->get()->result();
+							$usuario["nome"] = $usuarios[0]->nome_correspondente;
+						break;
+						case 3:
+							$usuarios = $this->db->select("nome_imobiliaria")->from("imobiliarias")->where("id", $usuario["usuario_id"])->get()->result();
+							$usuario["nome"] = $usuarios[0]->nome_imobiliaria;
+						break;
+						
+						default:
+							$usuario["nome"] = "Construvita";
+						break;
+					}
 					
 					if( $this->input->post("senha") ){
 						// $usuario['senha'] 	= $this->encrypt->encode($this->input->post("senha",TRUE));
 						$usuario['senha'] 	= $this->encryption->encrypt($this->input->post("senha",TRUE));
 					}
+					$usuario['principal'] 	= ($this->input->post("principal")) ? $this->input->post("principal") : "0";
 					
 					$this->db->where("id", $usuario['id']);
 					$this->db->update("usuarios", $usuario);
@@ -197,6 +264,41 @@ class Usuarios extends MY_Controller {
 				$this->session->set_flashdata("msg_success", "Usuário adicionado com sucesso!");
 				redirect('usuarios/index');
 			}
+		}
+	}
+
+	/**
+	 * Select que complementa os usuários que estarão no sistema
+	 */
+	public function get_usuarios_por_tipo() {
+		$tipo_usuario_id = $this->input->post("tipo_id");
+		$options = "";
+		switch ($tipo_usuario_id) {
+			case 1:
+				$usuarios = $this->db->select("id, nome_corretor")->from("corretores")->get()->result();
+				foreach ($usuarios as $key => $u) {
+					$options .= "<option value='{$u->id}'>$u->nome_corretor</option>".PHP_EOL;
+				}
+				print_r( $options );
+				break;
+			case 2:
+				$usuarios = $this->db->select("id, nome_correspondente")->from("correspondentes")->get()->result();
+				foreach ($usuarios as $key => $u) {
+					$options .= "<option value='{$u->id}'>$u->nome_correspondente</option>".PHP_EOL;
+				}
+				print_r( $options );
+				break;
+			case 3:
+				$usuarios = $this->db->select("id, nome_imobiliaria")->from("imobiliarias")->get()->result();
+				foreach ($usuarios as $key => $u) {
+					$options .= "<option value='{$u->id}'>$u->nome_imobiliaria</option>".PHP_EOL;
+				}
+				print_r( $options );
+				break;
+			default:
+				$options .= "<option value='0'>Construvitta</option>";
+				print_r( $options );
+				break;
 		}
 	}
 	

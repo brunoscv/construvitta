@@ -13,7 +13,7 @@
 					</nav>
 				</div>
 				<div class="col-lg-6 col-5 text-right">
-					<a href="#" class="btn btn-sm btn-neutral">Novo Menu</a>
+					<a href="<?= site_url()?>menus/criar" class="btn btn-sm btn-neutral">Novo Menu</a>
 					<!-- <a href="#" class="btn btn-sm btn-neutral">Filters</a> -->
 				</div>
 			</div>
@@ -47,7 +47,7 @@
 									<td><?= $menu->descricao; ?></td>
 									<td class="text-center">
 										<a href="<?= site_url('menus/editar/'.$menu->id); ?>"><i class="fas fa-edit"> </i></a>
-										<a href="<?= site_url("menus/delete/".$menu->id); ?>"><i class="fa fa-times"> </i></a>
+										<!-- <a href="<?= site_url("menus/delete/".$menu->id); ?>"><i class="fa fa-trash"> </i></a> -->
 									</td>
 								</tr>
 								<?php endforeach; ?>

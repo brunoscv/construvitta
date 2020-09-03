@@ -76,7 +76,7 @@
 											<a class="mr-2" href="<?php echo site_url("clientes/ver/".$item->id); ?>"><i class='fa fa-eye'></i></a>
 											<a class="mr-2" href="<?php echo site_url("clientes/editar/".$item->id); ?>"><i class='fas fa-edit'></i></a>
 											<!-- <a class="mr-2" href="<?php echo site_url("clientes/contrato/".$item->id); ?>"><i class='fa fa-file'></i></a> -->
-											<a class="" href="<?php echo site_url("clientes/delete/". $item->id); ?>"><i class='fa fa-trash'></i></a>
+											<!-- <a class="" <?= $displayed;?> href="<?php echo site_url("clientes/delete/". $item->id); ?>"><i class='fa fa-trash'></i></a> -->
 										</td>
 									</tr>
 								<?php endforeach; ?>

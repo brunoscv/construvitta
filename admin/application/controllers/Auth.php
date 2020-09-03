@@ -20,6 +20,8 @@ class Auth extends MY_Controller {
 					$usuarioLogado['id'] 	      = $usuario->id;
 					$usuarioLogado['nome'] 	      = $usuario->nome;
 					$usuarioLogado['usuario'] 	  = $usuario->usuario;
+					$usuarioLogado['tipo_id'] 	  = $usuario->tipo_id;
+					$usuarioLogado['usuario_id']  = $usuario->usuario_id;
 					$usuarioLogado['perfis'] 	  = $usuario->perfis;
 					$usuarioLogado['principal']   = $usuario->principal;
 					//$usuarioLogado['setores']   = $usuario->setores;

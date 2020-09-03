@@ -5,19 +5,57 @@ class Corretores extends MY_Controller {
 	public $data;	
 	function __construct(){
 		parent::__construct();
-		/* $this->_auth(); */
+		$this->_auth();
 		$this->load->model("Corretores_model");
 		$this->load->model("Imobiliarias_model");
+
+		//adiciona os dados do login para fazer as visualizacoes de informacoes
+		$this->data['admin'] 	= $this->session->userdata('userdata')['principal'];
+		$this->data['user_id'] 	= $this->session->userdata('userdata')['id'];
+		$this->data['usuario_id'] = $this->session->userdata('userdata')['usuario_id'];
+		$this->data['tipo_id'] 	  = $this->session->userdata('userdata')['tipo_id'];
 	}
 
 	public function index(){ 
 
+		if($this->data['admin'] != 1) {
+			switch ($this->data['tipo_id']) {
+				case 1:
+					$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+				case 2:
+					//$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+				case 3:
+					$this->db->where("i.id", $this->data['usuario_id']);
+				break;
+				default:
+					//$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+			}
+		}
 		$resultCorretores = $this->db
 			->select("c.id, c.nome_corretor, i.nome_imobiliaria, c.telefone, c.email, c.status, c.createdAt")
 			->from("corretores AS c")
 			->join("imobiliarias AS i", "c.imobiliarias_id = i.id")
 			->order_by("c.id", "DESC")
 			->get();
+			if($this->data['admin'] != 1) {
+				switch ($this->data['tipo_id']) {
+					case 1:
+						$this->db->where("c.user_id", $this->data['usuario_id']);
+					break;
+					case 2:
+						//$this->db->where("c.user_id", $this->data['usuario_id']);
+					break;
+					case 3:
+						$this->db->where("i.id", $this->data['usuario_id']);
+					break;
+					default:
+						//$this->db->where("c.user_id", $this->data['usuario_id']);
+					break;
+				}
+			}
 		$this->data['listaCorretores'] = $resultCorretores->result();
 
 	}
@@ -104,7 +142,7 @@ class Corretores extends MY_Controller {
 				$this->db->where("id",$id);
 				$this->db->update("corretores", $corretor);
 			
-				$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro <b>#{$corretor['id']}</b> atualizado!");
+				$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro <b>#{$id}</b> atualizado!");
 				redirect('corretores/index');
 				}
 			}

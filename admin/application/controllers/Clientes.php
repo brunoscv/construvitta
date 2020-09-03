@@ -5,29 +5,112 @@ class Clientes extends MY_Controller {
 	public $data;	
 	function __construct(){
 		parent::__construct();
-		/* $this->_auth(); */
+		$this->_auth();
 		$this->load->model("Clientes_model");
+		$this->load->model("Corretores_model");
+		$this->load->model("Correspondentes_model");
+
+		//adiciona os dados do login para fazer as visualizacoes de informacoes
+		$this->data['admin']  	  = $this->session->userdata('userdata')['principal'];
+		$this->data['id'] 		  = $this->session->userdata('userdata')['id'];
+		$this->data['usuario_id'] = $this->session->userdata('userdata')['usuario_id'];
+		$this->data['tipo_id'] 	  = $this->session->userdata('userdata')['tipo_id'];
 	}
+	
 
 	public function index(){ 
 
 		//Lista apenas os clientes que não tem contratos ativos.
 		//contratos != on
+		//print_r($this->data['usuario_id']); exit;
+		if($this->data['admin'] != 1) {
+			switch ($this->data['tipo_id']) {
+				case 1:
+					$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+				case 2:
+					//$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+				case 3:
+					$this->db->join("corretores AS co", "co.id = c.user_id")->join("imobiliarias AS im", "im.id = co.imobiliarias_id")->where("im.id", $this->data['usuario_id']);
+				break;
+				default:
+					//$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+			}
+		}
+		
 		$resultClientes = $this->db
 			->select("*")
 			->from("clientes AS c")
 			->order_by("c.id", "DESC")
-			->where("c.contrato !=", "on")
+			->where("c.contrato <>", "on")
 			->get();
+
+		if($this->data['admin'] != 1) {
+			switch ($this->data['tipo_id']) {
+				case 1:
+					$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+				case 2:
+					//$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+				case 3:
+					$this->db->join("corretores AS co", "co.id = c.user_id")->join("imobiliarias AS im", "im.id = co.imobiliarias_id")->where("im.id", $this->data['usuario_id']);
+				break;
+				default:
+					//$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+			}
+		}
+
 		$this->data['listaClientes'] = $resultClientes->result();
+		//arShow($this->data['listaClientes']); exit;
+		
+		$displayed = ($this->data['admin'] != 1) ? $displayed = "style='display:none;'" : $displayed = "";
+		$this->data['displayed'] = $displayed;
+		
+
 
 	}
 
 	function criar(){
 		$this->data['item'] = new stdClass();
+		$usuario_id = $this->data['usuario_id'];
 		
 		//Campos relacionados
 		//caso seja necessario adicione os relacionamento aqui
+		if($this->data['admin'] != 1) {
+			switch ($this->data['tipo_id']) {
+				case 1:
+					$corretores = $this->Corretores_model->get_corretor($usuario_id);
+					$correspondentes = $this->Correspondentes_model->get_correspondentes();
+				break;
+				case 2:
+					$corretores = $this->Corretores_model->get_corretores();
+					$correspondentes = $this->Correspondentes_model->get_correspondente($usuario_id);
+				break;
+				case 3:
+					//nesse caso o corretor_id seria igual ao id da imobiliaria que esta logada.
+					$corretores = $this->Corretores_model->get_corretores_by_imobiliaria($usuario_id);
+					$correspondentes = $this->Correspondentes_model->get_correspondentes();
+				break;
+				default:
+					//$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+			}
+		} else {
+			$corretores = $this->Corretores_model->get_corretores();
+			$correspondentes = $this->Correspondentes_model->get_correspondentes();
+		}
+		$this->data['listaCorretores'] = array();
+		foreach ($corretores as $corretor) {
+			$this->data['listaCorretores'][$corretor->id] = $corretor->nome_corretor;
+		}
+		$this->data['listaCorrespondentes'] = array();
+		foreach ($correspondentes as $correspondente) {
+			$this->data['listaCorrespondentes'][$correspondente->id] = $correspondente->nome_correspondente;
+		}
 		//fim Campos relacionados
 		
 		if($this->input->post('enviar')){
@@ -59,14 +142,17 @@ class Clientes extends MY_Controller {
 				$cliente['com_muro'] 		 = $this->input->post('com_muro', TRUE);
 				$cliente['outro_modelo'] 	 = $this->input->post('outro_modelo', TRUE);
 				$cliente['observacoes'] 	 = $this->input->post('observacoes', TRUE);
-				$cliente['user_id'] 		 = 1;
+				$cliente['user_id'] 		 = $this->input->post('user_id', TRUE);
+				$cliente['correspondente_id']= $this->input->post('correspondente_id', TRUE);
 				$cliente['status'] 		 	 = 1;
+				$cliente['contrato']		 = 0;
 				$cliente['createdAt'] 	 	 = date("Y-m-d H:i:s");
 
 				$this->db->insert("clientes", $cliente);
 				$cliente_id = $this->db->insert_id();
 
 				$this->salvar_arquivos($cliente_id);
+				$this->enviar_email($cliente_id);
 	
 				$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro adicionado com sucesso!");
 				redirect('clientes/index');
@@ -78,8 +164,43 @@ class Clientes extends MY_Controller {
 		$id 	 = $this->uri->segment(3);
 		$cliente = $this->db->from("clientes AS c")->where("id", $id)->get()->row();
 		$cliente_arquivos = $this->db->from("clientes_arquivos AS ca")->where("cliente_id", $id)->get()->result();
+		$usuario_id = $this->data['usuario_id'];
 
-		//arShow($cliente_arquivos);exit;
+		//Campos relacionados
+		//caso seja necessario adicione os relacionamento aqui
+		if($this->data['admin'] != 1) {
+			switch ($this->data['tipo_id']) {
+				case 1:
+					$corretores = $this->Corretores_model->get_corretor($usuario_id);
+					$correspondentes = $this->Correspondentes_model->get_correspondentes();
+				break;
+				case 2:
+					$corretores = $this->Corretores_model->get_corretores();
+					$correspondentes = $this->Correspondentes_model->get_correspondente($usuario_id);
+				break;
+				case 3:
+					//nesse caso o usuario_id seria igual ao id da imobiliaria que esta logada.
+					$corretores = $this->Corretores_model->get_corretores_by_imobiliaria($usuario_id);	
+					$correspondentes = $this->Correspondentes_model->get_correspondentes();			
+				break;
+				default:
+					//$this->db->where("c.user_id", $this->data['usuario_id']);
+				break;
+			}
+		} else {
+			$corretores = $this->Corretores_model->get_corretores();
+			$correspondentes = $this->Correspondentes_model->get_correspondentes();
+		}
+		$this->data['listaCorretores'] = array();
+		foreach ($corretores as $corretor) {
+			$this->data['listaCorretores'][$corretor->id] = $corretor->nome_corretor;
+		}
+
+		$this->data['listaCorrespondentes'] = array();
+		foreach ($correspondentes as $correspondente) {
+			$this->data['listaCorrespondentes'][$correspondente->id] = $correspondente->nome_correspondente;
+		}
+		//fim Campos relacionados
 
 		if(!$cliente){
 			$this->data['msg_error'] = $this->session->set_flashdata("msg_error", "Registro não encontrado!");
@@ -116,13 +237,16 @@ class Clientes extends MY_Controller {
 				$cliente['com_muro'] 		 = $this->input->post('com_muro', TRUE);
 				$cliente['outro_modelo'] 	 = $this->input->post('outro_modelo', TRUE);
 				$cliente['observacoes'] 	 = $this->input->post('observacoes', TRUE);
-				$cliente['user_id'] 		 = 1;
+				$cliente['user_id'] 		 = $this->input->post('user_id', TRUE);
+				$cliente['correspondente_id']= $this->input->post('correspondente_id', TRUE);
 				$cliente['status'] 		 	 = 1;
+				$cliente['contrato']		 = 0;
 				$cliente['updatedAt'] 	 	 = date("Y-m-d H:i:s");
 
 				$this->db->where("id",$id);
 				$this->db->update("clientes", $cliente);
 				$this->salvar_arquivos($id);
+				$this->enviar_email($id);
 				
 				$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro <b>#{$id}</b> atualizado!");
 				redirect('clientes/index');
@@ -133,9 +257,9 @@ class Clientes extends MY_Controller {
 
 	public function ver(){
 		$id 	 		  = $this->uri->segment(3);
-		$cliente 		  = $this->db->from("clientes AS c")->where("id", $id)->get()->row();
+		$cliente 		  = $this->db->select('c.*, cr.nome_corretor, co.nome_correspondente')->from("clientes AS c")->join('corretores AS cr', 'c.user_id = cr.id')->join('correspondentes AS co', 'c.correspondente_id = co.id')->where("c.id", $id)->get()->row();
 		$cliente_arquivos = $this->db->from("clientes_arquivos AS ca")->where("cliente_id", $id)->get()->result();
-		
+		//arShow($cliente);exit;
 		if(!$cliente){
 			$this->data['msg_error'] = $this->session->set_flashdata("msg_error", "Registro não encontrado!");
 			redirect('clientes/index');
@@ -196,10 +320,13 @@ class Clientes extends MY_Controller {
 				if($this->upload->do_upload('file')){
 					$fileData = $this->upload->data();
 					
+					//arShow($fileData); exit;
+					
 					$projectsFile[$i]['descricao']		= $fileData['file_name'];
+					$projectsFile[$i]['nome_arquivo']   = preg_replace( '/[`^~\'"]/', null, iconv( 'UTF-8', 'ASCII//TRANSLIT', $fileData['orig_name'] ) );
 					$projectsFile[$i]['tamanho'] 		= $fileData['file_size'];
 					$projectsFile[$i]['tipo'] 			= $fileData['file_type'];
-					$projectsFile[$i]['caminho'] 		= base_url() . 'public/uploads/arquivos/' . date("Ymd") . $cliente_id . '/';
+					$projectsFile[$i]['caminho'] 		= 'public/uploads/arquivos/' . date("Ymd") . '/';
 					$projectsFile[$i]['data_envio'] 	= date("Y-m-d H:i:s");
 					$projectsFile[$i]['cliente_id']		= $cliente_id;
 					$projectsFile[$i]['status'] 		= 1;
@@ -229,16 +356,50 @@ class Clientes extends MY_Controller {
 		exit;
 	}
 
-	function send_email() {
+	function enviar_email($cliente_id = null) {
+		//$cliente_id = $this->uri->segment(3);
 		$this->load->library('phpmailer_lib');
+		
+		$corretor = $this->db->select("c.id, c.nome_corretor, c.email")->from("clientes AS cl")->join("corretores AS c", "cl.user_id = c.id")->where("cl.id", $cliente_id)->get()->result();
+		$imob 	  = $this->db->select("im.id, im.nome_imobiliaria, im.email")->from("imobiliarias AS im")->join("corretores AS c", "im.id = c.imobiliarias_id")->where("c.id", $corretor[0]->id)->get()->result();
+		$correspondente = $this->db->select("co.id, co.nome_correspondente, co.email")->from("correspondentes AS co")->join("clientes AS cl", "cl.correspondente_id = co.id")->where("cl.id", $cliente_id)->get()->result();
+		$cliente  = $this->db->select("cl.nome_cliente, cl.cpf, cl.email, cl.telefone, cl.renda_bruta, cl.compr_dependente, cl.fgts,
+		cl.valor_fgts, cl.valor_sinal, cl.loteamento_zona, cl.c0, cl.c0_s, cl.c1, cl.c2, cl.c3, cl.c4, cl.c5, cl.com_muro, 
+		cl.outro_modelo, cl.valor_lote, cl.valor_casa, cl.extra, cl.muro, cl.cerca_eletrica, cl.portao_automatico, cl.observacoes, DATE_FORMAT(cl.createdAt,'%d/%m/%Y') AS date")
+		->from("clientes AS cl")
+		->where("cl.id", $cliente_id)
+		->get()->result();
+		$arquivos = $this->db->select("a.caminho, a.descricao")->from("clientes_arquivos AS a")->where("a.cliente_id", $cliente_id)->get()->result();
+		$emails   = array($corretor[0]->email, "contato@construvitta.com.br", $imob[0]->email, $correspondente[0]->email);
+		
+		//print_r($emails); exit;
+
+		$view = APPPATH . "views/modulos/clientes/mail/mail.html";
+		$message = file_get_contents($view);
+		$message = str_replace('%nome_cliente%', $cliente[0]->nome_cliente, $message); 
+		$message = str_replace('%cpf_cliente%', $cliente[0]->cpf, $message);
+		$message = str_replace('%telefone%', $cliente[0]->telefone, $message);
+		$message = str_replace('%email%', $cliente[0]->email, $message);
+		$message = str_replace('%nome_corretor%', $corretor[0]->nome_corretor, $message);
+		$message = str_replace('%nome_imobiliaria%', $imob[0]->nome_imobiliaria, $message);
+		$message = str_replace('%nome_correspondente%', $correspondente[0]->nome_correspondente, $message);
+		$message = str_replace('%renda_bruta%', $cliente[0]->renda_bruta, $message);
+		$message = str_replace('%compr_dependente%', $cliente[0]->compr_dependente, $message);
+		$message = str_replace('%fgts%', $cliente[0]->fgts, $message);
+		$message = str_replace('%valor_fgts%', $cliente[0]->valor_fgts, $message);
+		$message = str_replace('%valor_sinal%', $cliente[0]->valor_sinal, $message);
+		$message = str_replace('%loteamento_zona%', $cliente[0]->loteamento_zona, $message);
+		$message = str_replace('%outro_modelo%', $cliente[0]->outro_modelo, $message);
+		$message = str_replace('%observacoes%', $cliente[0]->observacoes, $message);
 
 		$mail = $this->phpmailer_lib->load();
 
 		//SMTP Configuration
 		$mail->SetLanguage('br');
-		$mail->CharSet = "utf8";
+		$mail->CharSet = "UTF-8";
+		$mail->Encoding = 'base64';
 		$mail->IsSMTP(); // enable SMTP
-		$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+		$mail->SMTPDebug = false; // debugging: 1 = errors and messages, 2 = messages only
 		$mail->SMTPAuth = true; // authentication enabled
 		$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for Gmail
 		$mail->Host = "construvitta.com.br";
@@ -249,18 +410,23 @@ class Clientes extends MY_Controller {
 		$mail->Priority = 1;
 		$mail->SetFrom("mensagens@construvitta.com.br", "Contato Construvitta");
 		$mail->AddReplyTo("mensagens@construvitta.com.br", "Contato Construvitta");
-		$mail->AddAddress("japasoares@gmail.com");
+		foreach ($emails as $key => $e) {
+			$mail->AddAddress("{$e}");
+		}
+		foreach ($arquivos as $key => $uf) {
+			$mail->AddAttachment($uf->caminho . $uf->descricao);
+		}
+		//$mail->AddAttachment($uploadfile);
 		$mail->isHTML(true);
-		$mail->Subject = "Assunto da mensagem";
-		$mail->Body = "Escreva o texto do email aqui";
+		$mail->Subject = "Dados Referentes ao Cadastro de: " . $cliente[0]->nome_cliente;
+		$mail->MsgHTML($message);
+		//$mail->Body = "Escreva o texto do email aqui2222";
 		if(!$mail->Send()) {
 			echo "Mailer Error: " . $mail->ErrorInfo;
 		} else {
-			echo "Mensagem enviada com sucesso";
+			$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro adicionado com sucesso!");
+			redirect('clientes/index');
 		}
-
-
-
 	}
 }
 

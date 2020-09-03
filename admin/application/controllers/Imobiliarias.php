@@ -5,19 +5,32 @@ class Imobiliarias extends MY_Controller {
 	public $data;	
 	function __construct(){
 		parent::__construct();
-		/* $this->_auth(); */
+		$this->_auth();
 		$this->load->model("Imobiliarias_model");
+
+		//adiciona os dados do login para fazer as visualizacoes de informacoes
+		$this->data['admin'] 	= $this->session->userdata('userdata')['principal'];
+		$this->data['user_id'] 	= $this->session->userdata('userdata')['id'];
 	}
 
 	public function index(){ 
 
+		
+		if($this->data['admin'] != 1) {
+			$this->db->where("i.id", $this->data['user_id']);
+		}
 		$resultImobiliarias = $this->db
 			->select("*")
 			->from("imobiliarias AS i")
 			->order_by("i.id", "DESC")
 			->get();
+		if($this->data['admin'] == 1) {
+			$this->db->where("i.id", $this->data['user_id']);
+		}
 		$this->data['listaImobiliarias'] = $resultImobiliarias->result();
 
+		$displayed = ($this->data['admin'] != 1) ? $displayed = "style='display:none;'" : $displayed = "";
+		$this->data['displayed'] = $displayed;
 	}
 
 	function criar(){
@@ -101,7 +114,7 @@ class Imobiliarias extends MY_Controller {
 					$this->db->where("id",$id);
 					$this->db->update("imobiliarias", $imobiliaria);
 				
-					$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro <b>#{$imobiliaria['id']}</b> atualizado!");
+					$this->data['msg_success'] = $this->session->set_flashdata("msg_success", "Registro <b>#{$id}</b> atualizado!");
 					redirect('imobiliarias/index');
 				}
 			}

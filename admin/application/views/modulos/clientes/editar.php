@@ -256,6 +256,28 @@ div.dragover {
 								</div>
 							</div>
 						</div>
+						
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="bmd-label-floating">Corretor Responsável</label>
+									<?php echo form_dropdown('user_id', $listaCorretores, set_value('user_id', @$item->user_id), 
+												'data-size="7" data-live-search="true" class="form-control fill_select btn_in own_selectbox" id="corretores"'); ?>
+									<small style="color:#F65676"><?php echo form_error('user_id'); ?></small>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="bmd-label-floating">Correspondente Responsável</label>
+									<?php echo form_dropdown('correspondente_id', $listaCorrespondentes, set_value('correspondente_id', @$item->correspondente_id), 
+												'data-size="7" data-live-search="true" class="form-control fill_select btn_in own_selectbox" id="correspondente"'); ?>
+									<small style="color:#F65676"><?php echo form_error('correspondente_id'); ?></small>
+								</div>
+							</div>
+						</div>
 
 						<div class="row">
 							<div class="col-md-12">
@@ -275,7 +297,7 @@ div.dragover {
                                                     </div>
                                                 </div>
                                                 <div class='col ml--3'>
-                                                    <h4 class='mb-1'> <?= $arquivo->descricao ?> </h4>
+                                                    <h4 class='mb-1'> <?= $arquivo->nome_arquivo ?> </h4>
                                                     <p class='small text-muted mb-0'><strong><?= $arquivo->tamanho ?></strong> kb</p>
                                                 </div>
                                                 <div class='col-auto'>

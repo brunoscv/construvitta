@@ -248,10 +248,83 @@ div.dragover {
 						</div>
 
 						<div class="row">
+							<div class="col-md-2">
+								<div class="form-group">
+									<label class="bmd-label-floating">Qual valor do Lote?</label>
+									<input type="text" value="<?php echo set_value("valor_lote", @$item->valor_lote); ?>" class="form-control" name="valor_lote" id="valor_lote">
+									<small style="color:#F65676"><?php echo form_error('valor_lote'); ?></small>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<label class="bmd-label-floating">Qual valor da Casa?</label>
+									<input type="text" value="<?php echo set_value("valor_casa", @$item->valor_casa); ?>" class="form-control" name="valor_casa" id="valor_casa">
+									<small style="color:#F65676"><?php echo form_error('valor_casa'); ?></small>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+								<label class="bmd-label-floating">Qual Extra?</label>
+									<input type="text" value="<?php echo set_value("extra", @$item->extra); ?>" class="form-control" name="extra" id="extra">
+									<small style="color:#F65676"><?php echo form_error('extra'); ?></small>
+								</div>
+							</div>
+							<div class="col-md-1 mb-3">
+								<label class="fbmd-label-floating" for="tem_repasse_garantido">Muro
+								</label>
+								<br>
+								<label class="custom-toggle">
+									<input type="checkbox" name="muro" <?php if(@$item->muro == "on") { echo "checked"; }  ?>>
+									<span class="custom-toggle-slider rounded-circle" data-label-off="Não" data-label-on="Sim"></span>
+								</label>
+							</div>
+							<div class="col-md-2 mb-3">
+								<label class="fbmd-label-floating" for="tem_repasse_garantido">Cerca Elétrica
+								</label>
+								<br>
+								<label class="custom-toggle">
+									<input type="checkbox" name="cerca_eletrica" <?php if(@$item->cerca_eletrica == "on") { echo "checked"; }  ?>>
+									<span class="custom-toggle-slider rounded-circle" data-label-off="Não" data-label-on="Sim"></span>
+								</label>
+							</div>
+							<div class="col-md-2 mb-3">
+								<label class="fbmd-label-floating" for="tem_repasse_garantido">Portão Automático
+								</label>
+								<br>
+								<label class="custom-toggle">
+									<input type="checkbox" name="portao_automatico" <?php if(@$item->portao_automatico == "on") { echo "checked"; }  ?>>
+									<span class="custom-toggle-slider rounded-circle" data-label-off="Não" data-label-on="Sim"></span>
+								</label>
+							</div>
+						</div>
+
+						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="bmd-label-floating">Observações</label>
 									<textarea id="observacoes" name="observacoes" value=""><?php echo set_value("observacoes", @$item->observacoes); ?></textarea>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="bmd-label-floating">Corretor Responsável</label>
+									<?php echo form_dropdown('user_id', $listaCorretores, set_value('user_id', @$item->user_id), 
+												'data-size="7" data-live-search="true" class="form-control fill_select btn_in own_selectbox" id="corretores"'); ?>
+									<small style="color:#F65676"><?php echo form_error('user_id'); ?></small>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="bmd-label-floating">Correspondente Responsável</label>
+									<?php echo form_dropdown('correspondente_id', $listaCorrespondentes, set_value('correspondente_id', @$item->correspondente_id), 
+												'data-size="7" data-live-search="true" class="form-control fill_select btn_in own_selectbox" id="correspondente"'); ?>
+									<small style="color:#F65676"><?php echo form_error('correspondente_id'); ?></small>
 								</div>
 							</div>
 						</div>
@@ -274,7 +347,7 @@ div.dragover {
                                                     </div>
                                                 </div>
                                                 <div class='col ml--3'>
-                                                    <h4 class='mb-1'> <?= $arquivo->descricao ?> </h4>
+                                                    <h4 class='mb-1'> <?= $arquivo->nome_arquivo ?> </h4>
                                                     <p class='small text-muted mb-0'><strong><?= $arquivo->tamanho ?></strong> kb</p>
                                                 </div>
                                                 <div class='col-auto'>

@@ -5,7 +5,7 @@ class Correspondentes extends MY_Controller {
 	public $data;	
 	function __construct(){
 		parent::__construct();
-		/* $this->_auth(); */
+		$this->_auth();
 		$this->load->model("Correspondentes_model");
 	}
 

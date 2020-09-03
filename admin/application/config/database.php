@@ -52,9 +52,9 @@ $query_builder = TRUE;
 
 
 	$db['default']['hostname'] = 'localhost';
-	$db['default']['username'] = 'root';
-	$db['default']['password'] = 'root';
-	$db['default']['database'] = 'construvitta';
+	$db['default']['username'] = 'const981_sistema';
+	$db['default']['password'] = 'src#123CONSTRUVITTA';
+	$db['default']['database'] = 'const981_sistema';
 	$db['default']['dbdriver'] = 'mysqli';
 	$db['default']['dbprefix'] = '';
 	$db['default']['pconnect'] = FALSE;

@@ -56,7 +56,11 @@
 							<div class="col-md-3">
 								<div class="form-group">
 								<label class="bmd-label-floating">Data de Nascimento</label>
-									<input type="text" value="<?php echo set_value("data_nasc", date("d/m/Y", strtotime($item->data_nasc))); ?>" class="form-control datepicker" name="data_nasc" id="data_nasc">
+									<?php if(@$item->data_nasc) { ?>
+									    <input type="text" value="<?php echo set_value("data_nasc", date("d/m/Y", strtotime(@$item->data_nasc))); ?>" class="form-control datepicker" name="data_nasc" id="data_nasc">
+									 <?php } else { ?>
+									    <input type="text" value="" class="form-control datepicker" name="data_nasc" id="data_nasc">
+									 <?php } ?>
 									<small style="color:#F65676"><?php echo form_error('data_nasc'); ?></small>
 								</div>
 							</div>

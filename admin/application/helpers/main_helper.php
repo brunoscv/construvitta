@@ -49,13 +49,13 @@ function isUsuarioMaster(){
 	return false;	
 }
 
-/* function hasPerfil($perfil){
+function hasPerfil($perfil){
 	$CI = &get_instance();
 	if( in_array($perfil, $CI->data['userdata']['perfis']) ){
 		return true;
 	}
 	return false;	
-} */
+}
 
 function filtraRespostas($respostaPorPessoa, $alternativasFiltro = array()){
 		
@@ -136,83 +136,176 @@ function resultToOptions($result, $opValue, $opText, $first = "- Selecione -"){
 	return $list;
 }
 
-function formPerfilList($name, $perfilList, $values = array(), $extra=""){
+// function formPerfilList($name, $perfilList, $values = array(), $extra=""){
+// 	$str = "<ul {$extra}>";
+// 	foreach($perfilList as $perfil){
+// 		$checked = ( in_array($perfil->id, $values) ) ? 'checked="checked"' : '';
+// 		$str .= '<li><label><input '.$checked.' name="'.$name.'" value="'.$perfil->id.'" type="checkbox" /> '.$perfil->descricao.'</label>';
+// 		$str .= "</li>";
+// 	}
+// 	$str .= "</ul>";
+// 	return $str;	
+// }
+
+// function recursiveFormMenuList($name, $menuList, $values = array(), $extra=""){
+// 	$str = "<ul {$extra}>";
+// 	foreach($menuList as $menu){
+// 		$checked = ( in_array($menu->id, $values) ) ? 'checked="checked"' : '';
+// 		$str .= '<li><label><input '.$checked.' name="'.$name.'" value="'.$menu->id.'" type="checkbox" /> '.$menu->descricao.'</label>';
+// 		if( count($menu->filhos) > 0 ){
+// 			$str .= recursiveFormMenuList($name, $menu->filhos, $values);
+// 		}
+// 		$str .= "</li>";
+// 	}
+// 	$str .= "</ul>";
+// 	return $str;	
+// }
+
+// function recursiveMenuNav($menuList, $extra = ""){
+// 	$ci = &get_instance();
+// 	$str="";
+
+// 	foreach($menuList as $key => $menu){
+
+// 		$hasSubmenu = (count($menu->filhos) > 0);
+
+// 		$class = "";
+// 			if( !empty($menu->url) && preg_match("|^".$menu->url."|", "/".$ci->uri->uri_string) ){
+// 				$class .= "active";
+// 			}
+			
+// 			$classLink = "";
+// 			$arrow = "";
+// 			if( $hasSubmenu ){
+// 				$class .= "";
+// 				$classLink = ''; 
+// 				$arrow = '';
+// 			}
+		
+// 		$url = ( empty($menu->url) ) ? "javascript:;" : site_url($menu->url);
+		
+// 		$str .= "";
+		
+// 		if( $hasSubmenu ){
+// 			$str .= 
+// 				"<li class=\"dropdown\">
+// 				<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"> 
+// 					<i class=\" {$menu->icone}\"></i> 
+// 					<span>" ."  ". $menu->descricao."</span>
+// 						<span class=\"caret\"></span>
+// 				</a>
+// 				<ul class=\"dropdown-menu\">";
+// 				$str .= recursiveMenuChildNav($menu->filhos,'class="list-unstyled" style="display:none"');
+// 			} else {
+// 				$str .= "<li role=\"presentation\"><a href=\"{$url}\" class=\"{$classLink}\"><i class=\"menu-icon {$menu->icone}\"> </i><span>" . "  ". $menu->descricao."</span></a>";
+// 			}
+// 			$str .= "";
+// 	}
+// 		$str .= "";
+// 		return $str;
+// }
+
+// function recursiveMenuChildNav($menuList, $extra = "") {
+// 	$ci = &get_instance();
+// 	$str = "";
+// 	foreach($menuList as $key => $menu){
+// 		$url = ( empty($menu->url) ) ? "javascript:;" : site_url($menu->url);
+		
+// 		$str .= "<li><a href=\"{$url}\"><i class=\"fa {$menu->icone}\"></i>" . " " . $menu->descricao."</a></li>";
+			
+// 	}
+// 	$str .= "</ul>";
+// 	return $str;
+// }
+
+function formPerfilList($name, $perfilList, $values = array(), $extra = "")
+{
 	$str = "<ul {$extra}>";
-	foreach($perfilList as $perfil){
-		$checked = ( in_array($perfil->id, $values) ) ? 'checked="checked"' : '';
-		$str .= '<li><label><input '.$checked.' name="'.$name.'" value="'.$perfil->id.'" type="checkbox" /> '.$perfil->descricao.'</label>';
+	foreach ($perfilList as $perfil) {
+		$checked = (in_array($perfil->id, $values)) ? 'checked="checked"' : '';
+		$str .= '<li><label><input ' . $checked . ' name="' . $name . '" value="' . $perfil->id . '" type="checkbox" /> ' . $perfil->descricao . '</label>';
 		$str .= "</li>";
 	}
 	$str .= "</ul>";
-	return $str;	
+	return $str;
 }
 
-function recursiveFormMenuList($name, $menuList, $values = array(), $extra=""){
+function recursiveFormMenuList($name, $menuList, $values = array(), $extra = "")
+{
 	$str = "<ul {$extra}>";
-	foreach($menuList as $menu){
-		$checked = ( in_array($menu->id, $values) ) ? 'checked="checked"' : '';
-		$str .= '<li><label><input '.$checked.' name="'.$name.'" value="'.$menu->id.'" type="checkbox" /> '.$menu->descricao.'</label>';
-		if( count($menu->filhos) > 0 ){
+	foreach ($menuList as $menu) {
+		$checked = (in_array($menu->id, $values)) ? 'checked="checked"' : '';
+		$str .= '<li><label><input ' . $checked . ' name="' . $name . '" value="' . $menu->id . '" type="checkbox" /> ' . $menu->descricao . '</label>';
+		if (count($menu->filhos) > 0) {
 			$str .= recursiveFormMenuList($name, $menu->filhos, $values);
 		}
 		$str .= "</li>";
 	}
 	$str .= "</ul>";
-	return $str;	
+	return $str;
 }
 
-function recursiveMenuNav($menuList, $extra = ""){
+function recursiveMenuNav($menuList, $extra = "")
+{
 	$ci = &get_instance();
-	$str="";
+	$str = "";
 
-	foreach($menuList as $key => $menu){
+	foreach ($menuList as $key => $menu) {
 
 		$hasSubmenu = (count($menu->filhos) > 0);
 
 		$class = "";
-			if( !empty($menu->url) && preg_match("|^".$menu->url."|", "/".$ci->uri->uri_string) ){
-				$class .= "active";
-			}
-			
-			$classLink = "";
-			$arrow = "";
-			if( $hasSubmenu ){
-				$class .= "";
-				$classLink = ''; 
-				$arrow = '';
-			}
-		
-		$url = ( empty($menu->url) ) ? "javascript:;" : site_url($menu->url);
-		
+		if (!empty($menu->url) && preg_match("|^" . $menu->url . "|", "/" . $ci->uri->uri_string)) {
+			$class .= "active";
+		}
+
+		$classLink = "";
+		$arrow = "";
+		if ($hasSubmenu) {
+			$class .= "";
+			$classLink = '';
+			$arrow = '';
+		}
+
+		$url = (empty($menu->url)) ? "javascript:;" : site_url($menu->url);
+
 		$str .= "";
-		
-		if( $hasSubmenu ){
-			$str .= 
-				"<li class=\"dropdown\">
-				<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"> 
-					<i class=\" {$menu->icone}\"></i> 
-					<span>" ."  ". $menu->descricao."</span>
-						<span class=\"caret\"></span>
-				</a>
-				<ul class=\"dropdown-menu\">";
-				$str .= recursiveMenuChildNav($menu->filhos,'class="list-unstyled" style="display:none"');
-			} else {
-				$str .= "<li role=\"presentation\"><a href=\"{$url}\" class=\"{$classLink}\"><i class=\"menu-icon {$menu->icone}\"> </i><span>" . "  ". $menu->descricao."</span></a>";
-			}
-			$str .= "";
+
+		if ($hasSubmenu) {
+			$str .=
+				"<li class=\"nav-item\">
+						<a class=\"nav-link\" href=\"#navbar-{$menu->id}\" data-toggle=\"collapse\" role=\"button\"
+						   aria-expanded=\"false\" aria-controls=\"navbar-{$menu->id}\">
+							<i class=\"{$menu->icone}\"></i>
+							<span class=\"nav-link-text\">{$menu->descricao}</span>
+						</a>
+						<div class=\"collapse\" id=\"navbar-{$menu->id}\">
+							<ul class=\"nav nav-sm flex-column\">";
+			$str .= recursiveMenuChildNav($menu->filhos, 'class="nav-item"');
+		} else {
+			$url = (empty($menu->url)) ? "javascript:;" : site_url($menu->url);
+			$str .= "<li class=\"nav-item\">
+						<a class=\"nav-link\" href=\"{$url}\" role=\"button\"
+						   aria-expanded=\"false\">
+							<i class=\"{$menu->icone}\"></i>
+							<span class=\"nav-link-text\">{$menu->descricao}</span>
+						</a>
+					</li>
+				";
+		}
+		$str .= "";
 	}
-		$str .= "";
-		return $str;
+	$str .= "";
+	return $str;
 }
 
-function recursiveMenuChildNav($menuList, $extra = "") {
+function recursiveMenuChildNav($menuList, $extra = "")
+{
 	$ci = &get_instance();
 	$str = "";
-	foreach($menuList as $key => $menu){
-		$url = ( empty($menu->url) ) ? "javascript:;" : site_url($menu->url);
-		
-		$str .= "<li><a href=\"{$url}\"><i class=\"fa {$menu->icone}\"></i>" . " " . $menu->descricao."</a></li>";
-			
+	foreach ($menuList as $key => $menu) {
+		$url = (empty($menu->url)) ? "javascript:;" : site_url($menu->url);
+		$str .= "<li class=\"nav-item\"><a href=\"{$url}\" class=\"nav-link\">$menu->descricao</a></li>";
 	}
 	$str .= "</ul>";
 	return $str;
