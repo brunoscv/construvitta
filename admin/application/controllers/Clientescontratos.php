@@ -320,7 +320,7 @@ class Clientescontratos extends MY_Controller {
 				}
 				$config['allowed_types'] 	= 'jpg|jpeg|png|pdf';
 				$config['max_size']			= 20*1024;
-				$config['encrypt_name'] 	= TRUE;
+				$config['encrypt_name'] 	= false;
 				
 				$this->load->library('upload', $config);
 				$this->upload->initialize($config);
